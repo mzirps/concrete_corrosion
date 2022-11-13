@@ -74,4 +74,31 @@ def extract_1d_corrosion_maps(output_dir, num_simulations = 1):
 # training.
 def verify_rebar_locations(file_and_corrosion_map):
   rebar_locations = [tuple(x[1].keys()) for x in file_and_corrosion_map]
-  all(x == rebar_locations[0] for x in rebar_locations)
+  return all(x == rebar_locations[0] for x in rebar_locations)
+
+# Read the corrosion depth scaling factor from output map.
+def get_scaling_factor(simulation_idx, timestep):
+  return 1.0
+
+# The corrosion depth data generated from COMSOL are on different scales. This
+# rescales them based on a hard-coded scaling factor.
+def remap_output_scales(file_and_corrosion_map):
+  output = []
+  for file_path, corrosion_map in file_and_corrosion_map:
+    file_name = file_path.split("/")[-1]
+    m = re.search("Corrosion_simulation_(\d+)_timeStep_(\d+).txt", file_name)
+    simulation_idx, timestep = int(m.group(1)), int(m.group(2))
+    if 1 <= simulation_idx <= 5:
+      scaling_factor = (10 ** 6) / 5
+    elif 6 <= simulation_idx <= 15:
+      scaling_factor = (10 ** 5)
+    elif 16 <= simulation_idx <= 22:
+      scaling_factor = (10 ** 5) / 5
+    elif simulation_idx == 23 and timestep <= 4:
+      scaling_factor = (10 ** 5) / 5
+    else:
+      scaling_factor = get_scaling_factor(simulation_idx, timestep)
+    
+    scaled_corrosion_map = {k : v * scaling_factor for k, v in corrosion_map.items()}
+    output.append((file_path, scaled_corrosion_map))
+  return output 
