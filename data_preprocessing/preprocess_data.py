@@ -19,16 +19,21 @@ def preprocess():
     corrosion_lib.extract_corrosion_output(args.output_path + '/' + args.corrosion_zipped_filename, args.num_simulations)
     output_lib.extract_FEM_output(args.output_path + '/' + args.output_zipped_filename, args.num_simulations)
 
-  corrosion_maps = corrosion_lib.extract_1d_corrosion_maps(args.output_path)
-  output_maps = output_lib.extract_concrete_outputs(args.output_path)
+  corrosion_maps = corrosion_lib.extract_1d_corrosion_maps(args.output_path, args.num_simulations)
+  output_maps = output_lib.extract_concrete_outputs(args.output_path, args.num_simulations)
  
   # Rescale corrosion depths to all be on the same scale
-  corrosion_maps = corrosion_lib.remap_output_scales(corrosion_maps)
+  corrosion_maps = corrosion_lib.remap_output_scales(corrosion_maps, output_maps)
   
   # check that all corrosion datapoints are on the same rebar scale
   assert corrosion_lib.verify_rebar_locations(corrosion_maps)
-  
+ 
+  # join corrosion and output data 
+
   print(len(corrosion_maps), len(output_maps))
+  import pdb; pdb.set_trace()
+
+
 
 if __name__ == "__main__":
    preprocess()

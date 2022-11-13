@@ -76,15 +76,11 @@ def verify_rebar_locations(file_and_corrosion_map):
   rebar_locations = [tuple(x[1].keys()) for x in file_and_corrosion_map]
   return all(x == rebar_locations[0] for x in rebar_locations)
 
-# Read the corrosion depth scaling factor from output map.
-def get_scaling_factor(simulation_idx, timestep):
-  return 1.0
-
 # The corrosion depth data generated from COMSOL are on different scales. This
 # rescales them based on a hard-coded scaling factor.
-def remap_output_scales(file_and_corrosion_map):
+def remap_output_scales(file_and_corrosion_maps, output_maps):
   output = []
-  for file_path, corrosion_map in file_and_corrosion_map:
+  for file_path, corrosion_map in file_and_corrosion_maps:
     file_name = file_path.split("/")[-1]
     m = re.search("Corrosion_simulation_(\d+)_timeStep_(\d+).txt", file_name)
     simulation_idx, timestep = int(m.group(1)), int(m.group(2))
@@ -97,7 +93,20 @@ def remap_output_scales(file_and_corrosion_map):
     elif simulation_idx == 23 and timestep <= 4:
       scaling_factor = (10 ** 5) / 5
     else:
-      scaling_factor = get_scaling_factor(simulation_idx, timestep)
+      # For certain simulations, the corrosion depths are stored in the output
+      # file.
+      replacement_corrosion_map = {}
+      output_filename = "output_%d_%d.mat" % (simulation_idx, timestep)
+      for output_path, output_map in output_maps:
+        if output_path.split("/")[-1] == output_filename:
+          assert output_map['height_override'] is not None
+          corrosion_depths_from_output = list(output_map['height_override'])
+          corrosion_map_points = list(corrosion_map.keys())
+          for i in range(len(corrosion_map_points)):
+            replacement_corrosion_map[corrosion_map_points[i]] = corrosion_depths_from_output[i]
+      assert replacement_corrosion_map, "Failed to find matching output for corrosion file %s" % file_path
+      print("Replacing corrosion map from %s with %s" % (file_path, output_path))
+      output.append((file_path, replacement_corrosion_map))
     
     scaled_corrosion_map = {k : v * scaling_factor for k, v in corrosion_map.items()}
     output.append((file_path, scaled_corrosion_map))

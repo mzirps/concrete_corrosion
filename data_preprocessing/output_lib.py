@@ -1,5 +1,6 @@
 import argparse
 import glob
+import os.path
 import re
 import scipy.io
 import zipfile
@@ -47,6 +48,7 @@ def extract_concrete_outputs_from_filepath(filepath):
   theta = mat['theta'][0][0]
   z = mat['z'][0][0]
   label = mat['ind'][0][0]
+  height_override = mat['exp_corr_layer'][0][0] if 'exp_corr_layer' in mat else None
   return {
       'rebar' : rebar,
       'cover' : cover,
@@ -54,7 +56,8 @@ def extract_concrete_outputs_from_filepath(filepath):
       'w_c' : w_c,
       'theta' : theta,
       'z' : z,
-      'label' : label
+      'label' : label,
+      'height_override' : height_override,
   }
 
 # Extract num_simulation number of output files. Returns a list of pairs, each
@@ -65,6 +68,9 @@ def extract_concrete_outputs(path, num_simulations = 1):
   file_and_outputs = []
   for filename in get_FEM_filenames(num_simulations):
     filepath = path + '/Data_outputs/' + filename
+    if not os.path.isfile(filepath):
+      print("skipping %s since output file does not exist!" % filepath)
+      continue
     concrete_outputs = extract_concrete_outputs_from_filepath(filepath)
     file_and_outputs.append((filepath, concrete_outputs))
   return file_and_outputs
