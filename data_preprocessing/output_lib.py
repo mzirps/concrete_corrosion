@@ -1,6 +1,7 @@
 import argparse
 import glob
 import re
+import scipy.io
 import zipfile
 
 
@@ -58,15 +59,12 @@ def extract_concrete_outputs_from_filepath(filepath):
 
 # Extract num_simulation number of output files. Returns a list of pairs, each
 # containing the output filename and the concrete output dictionary.
-def extract_concrete_outputs(zipped_path, num_simulations = 1):
+def extract_concrete_outputs(path, num_simulations = 1):
   FEM_filenames = get_FEM_filenames(num_simulations)
-
-  FEM_path_lst = zipped_path.split('/')
-  FEM_dir, zip_filename = '/'.join(FEM_path_lst[:-1]), FEM_path_lst[-1]
 
   file_and_outputs = []
   for filename in get_FEM_filenames(num_simulations):
-    filepath = FEM_dir + '/' + filename
+    filepath = path + '/Data_outputs/' + filename
     concrete_outputs = extract_concrete_outputs_from_filepath(filepath)
     file_and_outputs.append((filepath, concrete_outputs))
   return file_and_outputs

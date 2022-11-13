@@ -18,10 +18,12 @@ def extract_corrosion_output(path, num_simulations = 1):
   with zipfile.ZipFile(path, 'r') as zip_obj:
     file_names = zip_obj.namelist()
     for file_name in file_names:
+      file_name = file_name.split("/")[-1]
       if file_name not in corrosion_filenames:
         continue
-      print("extracting " + file_name + " to " + corrosion_dir)
-      zip_obj.extract(file_name, corrosion_dir)
+      full_file_name = path.split("/")[-1].split(".")[0] + "/" + file_name
+      print("extracting " + full_file_name + " to " + corrosion_dir)
+      zip_obj.extract(full_file_name, corrosion_dir)
 
 # Returns a list of corrosion simulation filenames, for the first num_simulation
 # datapoints. Note that the files are 1-indexed, so this returns filenames from
@@ -33,8 +35,7 @@ def get_corrosion_filenames(num_simulations = 1):
   for simulation_idx in range(1, num_simulations + 1):
     for timestep in range(1, NUM_TIMESTEPS_PER_SIMULATION + 1):
       filename = "Corrosion_simulation_%d_timeStep_%d.txt" % (simulation_idx, timestep)
-      filepath = "corrosion/" + filename
-      filenames.append(filepath)
+      filenames.append(filename)
   return filenames
 
 # Returns a 1d corrosion map given a single filepath. A 1d corrosion map is
@@ -57,10 +58,8 @@ def extract_1d_corrosion_map_from_filepath(filepath):
 
 # Returns a list of pairs, each containing the filename of the simulation, and
 # a 1-d corrosion map.
-def extract_1d_corrosion_maps(zipped_path, num_simulations = 1):
-  corrosion_path_lst = zipped_path.split('/')
-  corrosion_dir_base, zip_filename = '/'.join(corrosion_path_lst[:-1]), corrosion_path_lst[-1]
-  corrosion_dir = corrosion_dir_base + "/corrosion_out"
+def extract_1d_corrosion_maps(output_dir, num_simulations = 1):
+  corrosion_dir = output_dir + "/corrosion"
 
   file_and_corrosion_map = []
   for filename in get_corrosion_filenames(num_simulations):

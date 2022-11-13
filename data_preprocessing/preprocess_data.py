@@ -14,9 +14,18 @@ args = parser.parse_args()
 print(args)
 
 def preprocess():
+  # Extract the first num_simulations experiments to output_path.
   if (args.extract):
-    corrosion_lib.extract_corrosion_output(args.output_path + '/' + args.corrosion_zipped_filename)
-    output_lib.extract_FEM_output(args.output_path + '/' + args.output_zipped_filename)
+    corrosion_lib.extract_corrosion_output(args.output_path + '/' + args.corrosion_zipped_filename, args.num_simulations)
+    output_lib.extract_FEM_output(args.output_path + '/' + args.output_zipped_filename, args.num_simulations)
+
+  corrosion_maps = corrosion_lib.extract_1d_corrosion_maps(args.output_path)
+  output_maps = output_lib.extract_concrete_outputs(args.output_path)
+  
+  print(len(corrosion_maps), len(output_maps))
+  import pdb; pdb.set_trace()
+
+
 
 if __name__ == "__main__":
    preprocess()
