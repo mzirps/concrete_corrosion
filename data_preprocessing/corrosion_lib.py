@@ -13,7 +13,7 @@ def extract_corrosion_output(path, num_simulations = 1):
 
   corrosion_path_lst = path.split('/')
   corrosion_dir_base = '/'.join(corrosion_path_lst[:-1])
-  corrosion_dir = corrosion_dir_base + "/corrosion_out"
+  corrosion_dir = corrosion_dir_base
 
   with zipfile.ZipFile(path, 'r') as zip_obj:
     file_names = zip_obj.namelist()

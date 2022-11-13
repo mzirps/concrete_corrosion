@@ -22,14 +22,18 @@ def extract_FEM_output(zipped_path, num_simulations = 1):
 
   FEM_path_lst = zipped_path.split('/')
   FEM_dir, zip_filename = '/'.join(FEM_path_lst[:-1]), FEM_path_lst[-1]
-
+  
   with zipfile.ZipFile(zipped_path, 'r') as zip_obj:
     file_names = zip_obj.namelist()
     for file_name in file_names:
+      if "MACOSX" in file_name:
+        continue
+      file_name = file_name.split('/')[-1]
       if file_name not in FEM_filenames:
         continue
-      print("extracting " + file_name + " to " + FEM_dir)
-      zip_obj.extract(file_name, FEM_dir)
+      full_file_name = zip_filename.split(".")[0] + "/" + file_name
+      print("extracting " + full_file_name + " to " + FEM_dir)
+      zip_obj.extract(full_file_name, FEM_dir)
 
 # Extract concrete properties and surface cracking target label from specified
 # output file. Returns a dictionary of concrete statistics and the target label.
