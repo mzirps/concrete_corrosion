@@ -69,7 +69,10 @@ def preprocess():
   print("target_array shape: ", target_array.shape)
 
   # save ndarray to file
-
+  with open(args.output_path + "/corrosion.npy", "wb") as f:
+    np.save(f, corrosion_array)
+  with open(args.output_path + "/target_labels.npy", "wb") as f:
+    np.save(f, target_array)
 
 if __name__ == "__main__":
    preprocess()
