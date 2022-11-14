@@ -31,7 +31,7 @@ def join_corrosion_and_outputs(corrosion_maps, output_maps):
         target_label = output_map['label']
         corrosion_output.append([simulation_idx, timestep])
         # append concrete properties from output
-        #corrosion_output[-1] += [output_map['rebar'], output_map['cover'], output_map['tensile_strength'], output_map['w_c']] 
+        corrosion_output[-1] += [output_map['rebar'], output_map['cover'], output_map['tensile_strength'], output_map['w_c']] 
     if target_label is None:
       print("Skipping simulation %d timestep %d since output is missing" % (simulation_idx, timestep))
       continue
