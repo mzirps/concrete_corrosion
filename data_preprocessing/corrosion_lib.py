@@ -103,7 +103,7 @@ def remap_output_scales(file_and_corrosion_maps, output_maps):
           corrosion_depths_from_output = list(output_map['height_override'])
           corrosion_map_points = list(corrosion_map.keys())
           for i in range(len(corrosion_map_points)):
-            replacement_corrosion_map[corrosion_map_points[i]] = corrosion_depths_from_output[i]
+            replacement_corrosion_map[corrosion_map_points[i]] = float(corrosion_depths_from_output[i])
       assert replacement_corrosion_map, "Failed to find matching output for corrosion file %s" % file_path
       print("Replacing corrosion map from %s with %s" % (file_path, output_path))
       output.append((file_path, replacement_corrosion_map))
