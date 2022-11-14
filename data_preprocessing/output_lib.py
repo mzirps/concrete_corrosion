@@ -52,7 +52,7 @@ def extract_concrete_outputs_from_filepath(filepath):
   return {
       'rebar' : rebar,
       'cover' : cover,
-      'tensile_srength' : tensile_srength,
+      'tensile_strength' : tensile_srength,
       'w_c' : w_c,
       'theta' : theta,
       'z' : z,

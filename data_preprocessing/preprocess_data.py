@@ -29,7 +29,9 @@ def join_corrosion_and_outputs(corrosion_maps, output_maps):
     for output_path, output_map in output_maps:
       if output_path.split("/")[-1] == output_filename:
         target_label = output_map['label']
-        break
+        corrosion_output.append([simulation_idx, timestep])
+        # append concrete properties from output
+        #corrosion_output[-1] += [output_map['rebar'], output_map['cover'], output_map['tensile_strength'], output_map['w_c']] 
     if target_label is None:
       print("Skipping simulation %d timestep %d since output is missing" % (simulation_idx, timestep))
       continue
@@ -43,7 +45,7 @@ def join_corrosion_and_outputs(corrosion_maps, output_maps):
 
     # We will let the first and second columns of the output represent the simulation
     # number and timestep respectively.
-    corrosion_output.append([simulation_idx, timestep] + corrosion_depths)
+    corrosion_output[-1] += corrosion_depths
 
   assert len(corrosion_output) == len(target_output) 
   return np.array(corrosion_output), np.array(target_output)
@@ -56,7 +58,7 @@ def preprocess():
 
   corrosion_maps = corrosion_lib.extract_1d_corrosion_maps(args.output_path, args.num_simulations)
   output_maps = output_lib.extract_concrete_outputs(args.output_path, args.num_simulations)
- 
+  
   # Rescale corrosion depths to all be on the same scale. Also replace any corrosion depths from outputs.
   corrosion_maps = corrosion_lib.remap_output_scales(corrosion_maps, output_maps)
   
