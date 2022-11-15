@@ -8,6 +8,7 @@ The model first passes the corrosion inputs through a 1d convolution with 1 kern
 
 The following is a graphical representation of this model.
 
+![convolution_fc_diagram](convolution_fc_diagram.png)
 
 ## Usage
 ```
