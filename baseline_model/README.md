@@ -6,13 +6,13 @@ For each training example, the corrosion depth input is given as a (337 x 1) vec
 
 The model first passes the corrosion inputs through a 1d convolution with 1 kernel of size 20, followed by a ReLU and max pooling layer with kernel size 16. This reduces the (337 x 1) input vector to a (19 x 1) vector. This is concatenated with the (4 x 1) vector of concrete properties, and the result is passed into a fully-connected layer which outputs a scalar. Finally, a sigmoid activation is applied to get the result.
 
-The following is a graphical representation of this model.
+The following is a graphical representation of this model:
 
+![convolution_fc_diagram](convolution_fc_diagram.png)
 
 ## Usage
 ```
 python3 train.py --corrosion_path=/path/to/corrosion.npy \
 --label_path=/path/to/target_labels.npy --batch_size=512 --num_epochs=10000 \
 --output_path=/path/to/model.pt
-
 ```
